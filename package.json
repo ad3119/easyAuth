@@ -1,0 +1,15 @@
+{
+  "name": "FB-Google-Authentication",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Nikhil Fadnis",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.13.0",
+    "morgan": "^1.6.0"
+  }
+}

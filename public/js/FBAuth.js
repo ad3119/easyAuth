@@ -1,5 +1,5 @@
 var FBAuth = function() {
-    function statusChangeCallback(response) {
+    var statusChangeCallback = function(response) {
         console.log('statusChangeCallback');
         if (response.status === 'connected') {
             // Logged into your app and Facebook.
@@ -24,20 +24,20 @@ var FBAuth = function() {
                 scope: 'email,user_friends,public_profile'
             });
         }
-    }
+    };
 
-    function checkLoginState() {
+    var checkLoginState = function() {
         FB.getLoginStatus(function(response) {
             statusChangeCallback(response);
         });
-    }
+    };
 
     window.fbAsyncInit = function() {
         FB.init({
             appId: '455415931304718',
             cookie: true, // enable cookies to allow the server to access the session
             xfbml: true, // parse social plugins on this page
-            version: 'v2.3' // use version 2.2
+            version: 'v2.3' // use version 2.3
         });
     };
 
@@ -52,7 +52,7 @@ var FBAuth = function() {
     }(document, 'script', 'facebook-jssdk'));
 
 
-    function fetchUserProfile() {
+    var fetchUserProfile = function() {
         console.log('Welcome!  Fetching your information.... ');
         FB.api('/me', function(response) {
             var user = {};
@@ -87,16 +87,16 @@ var FBAuth = function() {
                 });
             });
         });
-    }
+    };
 
-    function logout() {
+    var logout = function() {
         FB.logout(function(response) {
             console.log('Logging out..');
             console.log(response);
             console.log('User is now logged out.');
         });
-    }
-
+    };
+    
     return {
         login: checkLoginState,
         logout: logout

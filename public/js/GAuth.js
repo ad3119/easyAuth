@@ -1,4 +1,5 @@
 var GAuth = function() {
+	// Load the SDK asynchronously
     (function() {
         var po = document.createElement('script');
         po.type = 'text/javascript';
@@ -11,13 +12,16 @@ var GAuth = function() {
     var login = function() {
         var config = {
             'client_id': '264266712427-r7ju25u9tisdf1ond6r4n8nk7vc9oo20.apps.googleusercontent.com',
-            'scope': 'email https://www.googleapis.com/auth/plus.login'
+            'scope': 'email https://www.googleapis.com/auth/plus.login',
+            'cookie_policy': 'single_host_origin'
         };
         gapi.auth.authorize(config, function() {
             console.log('Login complete');
+            console.log(config);
             console.log(gapi.auth.getToken().access_token); // Access_token
             gapi.auth.checkSessionState(config, function(stateMatched) {
-                if (stateMatched === false) {
+                // Check session state before proceeding
+            	if (stateMatched === false) {
                     console.log('G+ profile'); /*Personal profile information*/
                     fetchUserProfile();
                 } else {
@@ -33,7 +37,7 @@ var GAuth = function() {
         console.log('User is now logged out');
     };
 
-    function fetchUserProfile() {
+    var fetchUserProfile = function() {
         gapi.client.load('plus', 'v1', function() {
             /* Gets and renders the currently signed in user's profile data. */
             gapi.client.plus.people.get({
@@ -67,7 +71,7 @@ var GAuth = function() {
                 });
             });
         });
-    }
+    };
 
     return {
         login: login,

@@ -18,7 +18,8 @@ var GAuth = function() {
         gapi.auth.authorize(config, function() {
             console.log('Login complete');
             console.log(config);
-            console.log(gapi.auth.getToken().access_token); // Access_token
+            var accessToken = gapi.auth.getToken().access_token;
+            console.log(accessToken); // Access_token
             gapi.auth.checkSessionState(config, function(stateMatched) {
                 // Check session state before proceeding
             	if (stateMatched === false) {
@@ -39,13 +40,11 @@ var GAuth = function() {
 
     var fetchUserProfile = function() {
         gapi.client.load('plus', 'v1', function() {
-            /* Gets and renders the currently signed in user's profile data. */
+            // Gets and renders the currently signed in user's profile data. 
             gapi.client.plus.people.get({
                 'userId': 'me'
             }).then(function(res) {
                 var profile = res.result;
-                console.log(profile); // User profile
-                
                 // Construct user profile
                 var user = {};
                 user.id = profile.id;
@@ -55,17 +54,14 @@ var GAuth = function() {
                 user.picture = profile.image.url;
                 user.gender = profile.gender;
 
-                /* Gets and renders the list of people visible to this app. */
+                // Gets and renders the list of people visible to this app. 
                 gapi.client.plus.people.list({
                     'userId': 'me',
                     'collection': 'visible'
                 }).then(function(res) {
                     var people = res.result;
-                    console.log(people);	// Friends
-                    
                     // Add friends
                     user.friends = people.items;
-                    
                     console.log('Complete user info:');
                     console.log(user);
                 });

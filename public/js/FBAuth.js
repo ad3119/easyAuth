@@ -3,7 +3,8 @@ var FBAuth = function() {
         console.log('statusChangeCallback');
         if (response.status === 'connected') {
             // Logged into your app and Facebook.
-            fetchUserProfile();
+            console.log("Access token: " + response.authResponse.accessToken);
+            fetchUserProfile(response.authResponse.accessToken);
             
         } else if (response.status === 'not_authorized') {
             // The person is logged into Facebook, but not your app.
@@ -18,8 +19,8 @@ var FBAuth = function() {
                     return; // return, user not logged in
                 }
                 console.log("After FB login..."); // here user has logged in
-                console.log(response); // response with status & access_token
-                fetchUserProfile();
+                console.log("Access token: " + response.authResponse.accessToken); // response with status & access_token
+                fetchUserProfile(response.authResponse.accessToken);
             }, {
                 scope: 'email,user_friends,public_profile'
             });
@@ -52,40 +53,27 @@ var FBAuth = function() {
     }(document, 'script', 'facebook-jssdk'));
 
 
-    var fetchUserProfile = function() {
-        console.log('Welcome!  Fetching your information.... ');
-        FB.api('/me', function(response) {
-            var user = {};
-            console.log('User API: ');
-            console.log(response);
-
+    var fetchUserProfile = function(accessToken) {
+        console.log('Fetching your information..');
+        var profile = $.get('https://graph.facebook.com/me?access_token='+accessToken);
+        var friends = $.get('https://graph.facebook.com/me/friends?access_token='+accessToken);
+        $.when(profile, friends).then(function(profile, friends) {
             // Construct user profile
-            user.id = response.id;
-            user.email = response.email;
-            user.name = response.name;
-            user.gender = response.gender;
-            user.link = response.link;
+            var user = {};
+            user.id = profile[0].id;
+            user.email = profile[0].email;
+            user.name = profile[0].name;
+            user.gender = profile[0].gender;
+            user.link = profile[0].link;
+            user.friends = friends[0].data;
+            user.picture = "https://graph.facebook.com/" + user.id + "/picture?return_ssl_resources=1";
+            // Done
+            console.log("Complete user information: ");
+            console.log(user);
 
-            // Nesting callback to get friends
-            FB.api('/me/friends', function(response) {
-                console.log('Friends API: ');
-                console.log(response);
-
-                // Add user friends
-                user.friends = response.data;
-
-                // Nesting callback to get profile pic
-                FB.api('/' + user.id + '/picture', function(response) {
-                    console.log('Picture API: ');
-                    console.log(response);
-
-                    // Add user profile pic
-                    user.picture = response.data.url;
-
-                    console.log('Complete user info:');
-                    console.log(user);
-                });
-            });
+        },
+        function(xhr, status, error) {
+            console.log('Ajax error: ' + status);
         });
     };
 
